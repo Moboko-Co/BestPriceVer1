@@ -1,11 +1,5 @@
 package com.moboko.bestpricever1;
 
-/**
- * Vision Sample
- * Barcode Detection
- * 2019-02-01 K.OHWADA
- */
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -73,10 +67,6 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
 
     private CameraPerm mCameraPerm;
 
-    // barcode detect
-    private boolean isDetectRunning = false;
-
-
     /**
      * extra data in the intent
      */
@@ -99,7 +89,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
         btnDetect .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                detectBarcode();
+                setDetectRuning();
             }
         }); // btnDetect
 
@@ -133,6 +123,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
     /**
      * Stops the camera.
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onPause() {
         super.onPause();
@@ -197,54 +188,17 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
         //do something with barcode data returned
     }
 
-
-    /**
-     * detectBarcode
-     */
-    private void detectBarcode() {
-        if(isDetectRunning) {
-            isDetectRunning = false;
-            pauseDetect();
-            showToast("pause detect");
-        } else {
-            isDetectRunning = true;
-            resumeDetect() ;
-            showToast("resume detect");
-        }
-    } // detectBarcode
-
-
-    /**
-     * resumeDetect
-     */
-    private void resumeDetect() {
-        setDetectRuning();
-    } // resumeDetect
-
-
-    /**
-     * pauseDetect
-     */
-    private void pauseDetect() {
-        setDetectRuning();
-        if(mGraphicOverlay != null) {
-            mGraphicOverlay.clear();
-        }
-    } // pauseDetect
-
-
     /**
      * setDetectRuning
      */
     private void setDetectRuning() {
         if(mCamera2Source != null) {
-            mCamera2Source.setDetectRunning(isDetectRunning);
+            mCamera2Source.setDetectRunning(true);
         }
         if(mGraphicOverlay != null) {
-            mGraphicOverlay.setDrawRuning(isDetectRunning);
+            mGraphicOverlay.setDrawRuning(true);
         }
-    } // setDetectRuning
-
+    }
 
     /**
      * starts the camera source
@@ -259,12 +213,13 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
             mPreview.start(mCamera2Source, mGraphicOverlay);
         }
 
-    } // startCameraSource
+    }
 
 
     /**
      * stopCameraSource
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void stopCameraSource() {
         if (mPreview != null) {
             mPreview.stop();
@@ -344,9 +299,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
         Camera2Source cameraSource = builder.build();
         return cameraSource;
 
-    } // createCameraSourceBack
-
-
+    }
 
     /**
      * check that the device has play services available
@@ -361,7 +314,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
             dlg.show();
         }
 
-    } // checkGooglePlayServicesAvailable
+    }
 
 
     /**
@@ -420,6 +373,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
      */
     Camera2Source.ErrorCallback cameraErrorCallback = new Camera2Source.ErrorCallback() {
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onError(String msg) {
             stopCameraSource();
@@ -459,7 +413,6 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
         Intent data = new Intent();
         data.putExtra(EXTRA_KEY_BARCODE, barcode);
         setResult(CommonStatusCodes.SUCCESS, data);
-        showToast( "Barcode: " + barcode.displayValue );
         finish();
         return true;
 

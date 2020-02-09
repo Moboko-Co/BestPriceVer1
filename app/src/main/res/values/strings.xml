@@ -10,6 +10,7 @@
     <!-- AndroidManifest.xml -->
     <string name="title_main_activity">Barcode Reader Sample</string>
     <string name="title_barcode_capture_activity">Read Barcode</string>
+    <string name="title_search_results_activity">Read Barcode</string>
 
     <!-- activity_main.xml -->
     <string name="barcode_header">Click &quot;Read Barcode&quot; to read a barcode</string>
