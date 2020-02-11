@@ -1,27 +1,19 @@
 package com.moboko.bestpricever1;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.material.tabs.TabLayout;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
+
+import static com.moboko.bestpricever1.util.Consts.*;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String EXTRA_KEY_BARCODE = BarcodeCaptureActivity.EXTRA_KEY_BARCODE;
-    public static final String EXTRA_KEY_SEARCH = "Search";
-    private static final int RC_BARCODE_CAPTURE = 9001;
     static final int PICK_CONTACT_REQUEST = 1;
 
     @Override
@@ -33,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText editText = findViewById(R.id.searchItemEditText);
-                startSearchResultActivity(editText.getText().toString());
+                startSearchResultActivity(EXTRA_KEY_SEARCH,editText.getText().toString());
             }
         });
 
@@ -46,9 +38,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void startSearchResultActivity(String searchItem) {
+    private void startSearchResultActivity(String searchFlag,String searchItem) {
         Intent intent = new Intent(this, SearchResultActivity.class);
-        intent.putExtra(EXTRA_KEY_SEARCH, searchItem);
+
+        switch(searchFlag) {
+            case EXTRA_BARCODE_SEARCH :
+                intent.putExtra(EXTRA_BARCODE_SEARCH, searchItem);
+                break;
+            case EXTRA_KEY_SEARCH:
+                intent.putExtra(EXTRA_KEY_SEARCH, searchItem);
+                break;
+        }
         startActivityForResult(intent, RC_BARCODE_CAPTURE);
     }
 
@@ -60,9 +60,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void  onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_CONTACT_REQUEST) {
-            if (resultCode == RESULT_OK) {
+        if (requestCode == RC_BARCODE_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
                 String barcode = data.getStringExtra(EXTRA_KEY_BARCODE);
+                startSearchResultActivity(EXTRA_BARCODE_SEARCH,barcode);
             }
         }
     }

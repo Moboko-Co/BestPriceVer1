@@ -15,16 +15,71 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.material.tabs.TabLayout;
+import com.moboko.bestpricever1.entity.ItemList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.moboko.bestpricever1.util.Consts.*;
 
 public class SearchResultActivity extends AppCompatActivity {
 
-    private static final String EXTRA_KEY_SEARCH = MainActivity.EXTRA_KEY_SEARCH;
+    Map<String, ArrayList<ItemList>> resItem;
+    String searchItem;
+    String searchBarcode;
+    FetchPostsTask fetchPostsTask;
+
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_results);
 
-        final String searchItem = getIntent().getStringExtra(EXTRA_KEY_SEARCH);
+        //バーコードもやらなきゃ
+        searchItem = getIntent().getStringExtra(EXTRA_KEY_SEARCH);
+        searchBarcode = getIntent().getStringExtra(EXTRA_BARCODE_SEARCH);
+
+        Map<String,String> url = new HashMap<>();
+
+        fetchPostsTask = new FetchPostsTask();
+
+        //バーコード検索
+        if(!(searchBarcode.isEmpty() || searchBarcode == null)){
+            url.put(KEY_AMAZON,AMAZON_BASE_URL + AMAZON_ADD_JANCODE + searchBarcode);
+        }
+        //キーワード検索
+        else{
+            url.put(KEY_RAKUTEN,RAKUTEN_BASE_URL + RAKUTEN_ADD_KEYWORD + searchItem);
+        }
+
+        fetchPostsTask.setOnCallBack(new FetchPostsTask.CallBackTask(){
+
+            @Override
+            public void CallBack(Map<String, List<ItemList>> result) {
+                super.CallBack(result);
+                Fragment[] arrFragments = new Fragment[5];
+                arrFragments[0] = new AmazonFrag();
+                arrFragments[1] = new RakutenFrag(fetchPostsTask.resItemList.get(KEY_RAKUTEN));
+                arrFragments[2] = new MerukariFrag();
+                arrFragments[3] = new RakumaFrag();
+                arrFragments[4] = new PaypayFrag();
+
+
+                TabLayout tabLayout = findViewById(R.id.searchViewTabs);
+                ViewPager viewPager = findViewById(R.id.searchViewPager);
+
+                SearchResultActivity.SearchPagerAdapter adapter = new SearchResultActivity.SearchPagerAdapter(getSupportFragmentManager(), arrFragments);
+                viewPager.setAdapter(adapter);
+                tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));
+                tabLayout.setTabTextColors(getResources().getColor(R.color.colorGray),getResources().getColor(R.color.colorPrimary));
+                tabLayout.setupWithViewPager(viewPager);
+
+            }
+
+        });
+
+        fetchPostsTask.execute(url);
 
         TextView resultItem = findViewById(R.id.resultItemTextView);
         resultItem.setText(searchItem);
@@ -38,24 +93,8 @@ public class SearchResultActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        Fragment[] arrFragments = new Fragment[5];
-        arrFragments[0] = new AmazonFrag();
-        arrFragments[1] = new RakutenFrag();
-        arrFragments[2] = new MerukariFrag();
-        arrFragments[3] = new RakumaFrag();
-        arrFragments[4] = new PaypayFrag();
-
-
-        TabLayout tabLayout = findViewById(R.id.searchViewTabs);
-        ViewPager viewPager = findViewById(R.id.searchViewPager);
-
-        SearchResultActivity.SearchPagerAdapter adapter = new SearchResultActivity.SearchPagerAdapter(getSupportFragmentManager(), arrFragments);
-        viewPager.setAdapter(adapter);
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));
-        tabLayout.setTabTextColors(getResources().getColor(R.color.colorGray),getResources().getColor(R.color.colorPrimary));
-        tabLayout.setupWithViewPager(viewPager);
     }
+
     private class SearchPagerAdapter extends FragmentStatePagerAdapter {
         private Fragment[] arrFragments;
 

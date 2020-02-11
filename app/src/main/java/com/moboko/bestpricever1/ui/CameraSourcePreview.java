@@ -225,6 +225,7 @@ public class CameraSourcePreview extends ViewGroup {
      * SurfaceHolder.Callback
      */
     private final SurfaceHolder.Callback mSurfaceViewListener = new SurfaceHolder.Callback() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void surfaceCreated(SurfaceHolder surface) {
             log_d("surfaceCreated");

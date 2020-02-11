@@ -87,6 +87,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
 
         Button btnDetect =  findViewById(R.id.Button_detect);
         btnDetect .setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 setDetectRuning();
@@ -191,6 +192,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
     /**
      * setDetectRuning
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setDetectRuning() {
         if(mCamera2Source != null) {
             mCamera2Source.setDetectRunning(true);
@@ -389,6 +391,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
      */
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean onSingleTapConfirmed(MotionEvent event) {
             log_d("onSingleTapConfirmed");
@@ -404,6 +407,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
      * find the Barcode closest to the tapped position
      * and return Barcode value to the calling Activity
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private boolean procSingleTapConfirmed(float rawX, float rawY) {
         log_d("procSingleTapConfirmed");
         Barcode barcode = findBarcode(rawX, rawY);
@@ -411,7 +415,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
 
         // return Barcode value to the calling Activity
         Intent data = new Intent();
-        data.putExtra(EXTRA_KEY_BARCODE, barcode);
+        data.putExtra(EXTRA_KEY_BARCODE, barcode.displayValue);
         setResult(CommonStatusCodes.SUCCESS, data);
         finish();
         return true;
@@ -422,6 +426,7 @@ public final class BarcodeCaptureActivity extends Activity implements BarcodeGra
     /**
      * find the Barcode closest to the tapped position
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private Barcode findBarcode(float rawX, float rawY) {
         log_d("findBarcode");
         // Find tap point in preview frame coordinates.

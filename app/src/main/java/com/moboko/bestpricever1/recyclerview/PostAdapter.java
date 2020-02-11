@@ -13,15 +13,16 @@ import com.moboko.bestpricever1.R;
 import com.moboko.bestpricever1.entity.ItemList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     private Context mContext;
-    private ArrayList<ItemList> itemLists;
+    private List<ItemList> itemLists;
     View baseView;
 
 
-    public PostAdapter(Context context, ArrayList<ItemList> itemList){
+    public PostAdapter(Context context,List<ItemList> itemList){
         mContext = context;
         itemLists = itemList;
 

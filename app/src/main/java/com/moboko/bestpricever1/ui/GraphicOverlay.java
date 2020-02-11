@@ -8,8 +8,11 @@ package com.moboko.bestpricever1.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.RequiresApi;
 
 import com.moboko.bestpricever1.util.Camera2Source;
 
@@ -23,6 +26,7 @@ import java.util.Vector;
  * to be overlayed on top of an associated preview
  * original : https://github.com/googlesamples/android-vision/tree/master/visionSamples/barcode-reader/app/src/main/java/com/google/android/gms/samples/vision/barcodereader
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
 
     private final Object mLock = new Object();
@@ -185,6 +189,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
          * Adjusts the x coordinate from the preview's coordinate system
          * to the view coordinate system.
          */
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public float translateX(float x) {
             if (mOverlay.mFacing == Camera2Source.CAMERA_FACING_FRONT) {
                 return mOverlay.getWidth() - scaleX(x);
